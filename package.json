@@ -1,0 +1,34 @@
+{
+  "name": "vk-promise-test-app",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"homepage": "https://kuhel.github.io/vk-promise-test-app",
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:kuhel/vk-promise-test-app.git"
+	},
+	"scripts": {
+		"start": "cross-env PORT=10888 react-scripts start",
+		"build": "react-scripts build",
+		"deploy": "gh-pages -d build",
+		"predeploy": "npm run build"
+	},
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "cross-env": "^5.2.0",
+    "react-hot-loader": "^4.3.5",
+    "react-scripts": "^1.1.5"
+  },
+  "dependencies": {
+    "@vkontakte/icons": "^1.2.0",
+    "@vkontakte/vkui": "^2.9.2",
+    "@vkontakte/vkui-connect": "^1.0.0",
+    "core-js": "^2.5.7",
+    "prop-types": "^15.6.2",
+    "react": "^16.5.0",
+    "react-dom": "^16.5.0"
+  }
+}
