@@ -41,15 +41,22 @@
       //     fn.apply(null, args);
       //   });
       // }
-      var promise = promises[args[0].data.request_id];
+      var promise = null;
+      if (isWeb) {
+        if (args[0].data && args[0].data.data) {
+          promise = promises[args[0].data.data.request_id];
+        }
+      } else if (args[0].detail && args[0].detail.data && args[0].detail.data.request_id) {
+        promise = promises[args[0].detail.data.request_id];
+      }
       if (promise) {
-        var data = { ...args[0].data };
+        var data = { ...args[0].data.data };
         if (promise.customRequestId) {
           delete data['request_id'];
         }
-        promises[args[0].data.request_id].resolve(data)
+        promises[args[0].data.data.request_id].resolve(data)
       }
-    });
+     });
   }
 
   module.exports = {
@@ -73,6 +80,11 @@
       var iosBridge = isClient && window.webkit && window.webkit.messageHandlers;
       var isDesktop = !androidBridge && !iosBridge;
       var id = params['request_id'] ? params['request_id'] : `method#${method_counter++}`;
+      var customRequestId = false;
+      if (!params.hasOwnProperty('request_id')) {
+        customRequestId = true;
+        params['request_id'] = id;
+      }
 
       if (androidBridge && typeof androidBridge[handler] == FUNCTION) {
         androidBridge[handler](JSON.stringify(params));
@@ -94,31 +106,9 @@
           resolve,
           reject,
           params,
-          customRequestId: params.hasOwnProperty('request_id'),
+          customRequestId,
         }
       });
-    },
-    /**
-     * Subscribe on VKWebAppEvent
-     *
-     * @param {Function} fn Event handler
-     * @returns {void}
-     */
-    subscribe: function subscribe(fn) {
-      subscribers.push(fn);
-    },
-    /**
-     * Unsubscribe on VKWebAppEvent
-     *
-     * @param {Function} fn Event handler
-     * @returns {void}
-     */
-    unsubscribe: function unsubscribe(fn) {
-      var index = subscribers.indexOf(fn);
-
-      if (index > -1) {
-        subscribers.splice(index, 1);
-      }
     },
 
     /**

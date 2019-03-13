@@ -21,50 +21,14 @@ class App extends React.Component {
 	}
 
 	componentDidMount() {
-		connect.subscribe((e) => {
-			console.log(e.detail.type);
-			switch (e.detail.type) {
-				case 'VKWebAppGetUserInfoResult':
-					this.setState({ fetchedUser: e.detail.data });
-					break;
-				case 'VKWebAppGetPhoneNumberResult':
-					this.setState({ phone: e.detail.data });
-					break;
-				case 'VKWebAppGetClientVersionResult':
-					this.setState({ version: e.detail.data });
-					break;
-				case 'VKWebAppGetEmailResult':
-					this.setState({ email: e.detail.data });
-					break;
-				case 'VKWebAppGetGeodataResult':
-					this.setState({ geodata: e.detail.data });
-					break;
-				case 'VKWebAppAccessTokenReceived':
-					this.setState({ access_token: e.detail.data.data.access_token });
-					console.log('👋 Token — ', e.detail.data.data.access_token);
-					connect.send('VKWebAppGetGeodata');
-					connect.send("VKWebAppCallAPIMethod", {"method": "users.get", "request_id": "324nnefj", "params": {
-						"user_ids": "1,2,3",
-						"access_token": e.detail.data.data.access_token
-					}});
-					break;
-				default:
-					if (~e.detail.type.indexOf('Fail')) {
-						this.setState((state) => ({
-							errors: [ ...state.errors, e.detail.type]
-						}));
-					} else {
-						this.setState((state) => ({
-							other: [ ...state.other, e.detail.type]
-						}));
-					}
-					console.log(e.detail.data);
-			}
-		});
+		
 		connect.send('VKWebAppSetLocation', {"location": "ololo"})
 			.then(data => console.log(data));
 		connect.send('VKWebAppGetEmail')
-			.then(data => console.log(data));
+			.then(data => {
+				this.setState({ email: data });
+				console.log(data);
+			});
 		// connect.send('VKWebAppJoinGroup', {"group_id": 156817253});
 		// connect.send('VKWebAppOpenPayForm',  {"amount":100,"data":"{\"amount\":100,\"currency\":\"RUB\",\"order_id\":251,\"cashback\":{\"pay_time\":1537282294,\"amount\":0.5},\"ts\":1537282294,\"merchant_data\":\"eyJhbW91bnQiOjEwMCwiY3VycmVuY3kiOiJSVUIiLCJvcmRlcl9pZCI6MjUxLCJjYXNoYmFjayI6eyJwYXlfdGltZSI6MTUzNzI4MjI5NCwiYW1vdW50IjowLjV9LCJ0cyI6MTUzNzI4MjI5NH0=\",\"merchant_sign\":\"2df2eb788c7d2f02efa53bf046389848e6259278\"}","description":"\u041e\u043f\u043b\u0430\u0442\u0430 \u0437\u0430\u043a\u0430\u0437\u0430 \u2116251","action":"pay-to-service","merchant_id":"428700","sign":"fb8a01eb17187cebdfdd6e1fe0675364"});
 		// connect.send('VKWebAppOpenApp', {"app_id": 6695435, "location": "test-location"});
@@ -74,7 +38,10 @@ class App extends React.Component {
 		// connect.send('VKWebAppGetPhoneNumber');
 		// connect.send('VKWebAppGetUserInfo', {});
 		connect.send('VKWebAppGetGeodata')
-			.then(data => console.log(data));
+			.then(data => {
+				this.setState({ geodata: data });
+				console.log(data);
+			});
 		// connect.send('VKWebAppOpenQR');
 		// connect.send('VKWebAppGetAuthToken');
 		// connect.send('VKWebAppUpdateInfo');
